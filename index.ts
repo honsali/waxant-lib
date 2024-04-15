@@ -121,6 +121,7 @@ export { default as Separateur20 } from './composants/widget/Separateur20';
 export { default as Separateur40 } from './composants/widget/Separateur40';
 export { default as TimeLine } from './composants/widget/TimeLine';
 export { default as WaxantApp } from './noyau/WaxantApp';
+export { default as WaxantPrivateApp } from './noyau/WaxantPrivateApp';
 export { MdlAuth, selectRole, selectUser } from './noyau/auth/MdlAuth';
 export { default as useHasRight } from './noyau/auth/useHasRight';
 export { default as useContexteApp } from './noyau/contexte/ContexteApp';

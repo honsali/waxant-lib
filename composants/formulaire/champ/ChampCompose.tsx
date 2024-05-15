@@ -3,14 +3,14 @@ import React, { useCallback, useEffect, useState } from 'react';
 import useI18n from '../../../noyau/i18n/useI18n';
 
 const ChampCompose = (props: any) => {
-    const i18n = useI18n();
+    const { i18n } = useI18n();
     const extract = useCallback((cprops): any => {
         const attributes = {} as any;
         const i = cprops.nom.indexOf('.');
 
         attributes.name = i > 0 ? [cprops.nom.substr(0, i), cprops.nom.substr(i + 1)] : cprops.nom;
 
-        attributes.placeHolder = cprops.libelle ? cprops.libelle : i18n.libelle(i > 0 ? cprops.nom.substr(i + 1) : cprops.nom);
+        attributes.placeHolder = cprops.libelle ? cprops.libelle : i18n(i > 0 ? cprops.nom.substr(i + 1) : cprops.nom);
         attributes.noStyle = true;
 
         if (cprops.requis) {

@@ -4,9 +4,9 @@ import useI18n from '../../../noyau/i18n/useI18n';
 import ActionCritique from '../actionBase/ActionCritique';
 
 const ActionSupprimer = ({ typeEntite, action }) => {
-    const i18n = useI18n();
+    const { i18n } = useI18n();
     return (
-        <Popconfirm title={i18n.libelle('confirmer.supprimer.' + typeEntite)} onConfirm={action} okText="Confirmer" cancelText="Annuler">
+        <Popconfirm title={i18n('confirmer.supprimer.' + typeEntite)} onConfirm={action} okText="Confirmer" cancelText="Annuler">
             <ActionCritique nom={'supprimer.' + typeEntite} icone={<DeleteFilled />} action={action} />
         </Popconfirm>
     );

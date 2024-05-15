@@ -1,20 +1,28 @@
-import styled from 'styled-components';
+import { ConfigProvider, theme } from 'antd';
 import Bouton, { BoutonProps } from './Bouton';
 import BoutonPleinNeutre from './BoutonPleinNeutre';
 
-const Composant = styled(Bouton)`
-    color: #fff;
-    background-color: ${(props) => props.theme.token.colorWarning};
-    border-color: ${(props) => props.theme.token.colorWarning};
-    &:hover {
-        color: #fff;
-        background-color: red;
-        border-color: red;
-    }
-`;
-
 const BoutonPleinSecondaire = (props: BoutonProps) => {
-    return props.inactif ? <BoutonPleinNeutre {...props} /> : <Composant {...props} />;
+    const { token } = theme.useToken();
+    const components = {
+        Button: {
+            defaultColor: '#fff',
+            defaultBg: token.colorWarning,
+            defaultBorderColor: token.colorWarning,
+            defaultHoverColor: '#fff',
+            defaultHoverBg: 'red',
+            defaultHoverBorderColor: 'red',
+        },
+    };
+
+    if (props.inactif) {
+        return <BoutonPleinNeutre {...props} />;
+    }
+    return (
+        <ConfigProvider theme={{ components }}>
+            <Bouton {...props} />
+        </ConfigProvider>
+    );
 };
 
 export default BoutonPleinSecondaire;

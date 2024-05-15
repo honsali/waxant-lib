@@ -1,28 +1,29 @@
-import { Provider as StoreProvider } from 'react-redux';
 import AppAuth from './auth/AppAuth';
 import initAxios from './axios/axios.config';
-import { ConfigAppType, ContexteApp } from './contexte/ContexteApp';
-import getStore from './redux/redux.config';
+import { ConfigAppType, ContexteAppProvider } from './contexte/ContexteApp';
+import { ContexteI18nProvider } from './i18n/ContexteI18n';
+import { DynamicStoreProvider } from './redux/DynamicStoreContext';
 import AppPrivateRoutes from './routes/AppPrivateRoutes';
 import ErrorBoundary from './routes/ErrorBoundary';
 import AntdThemeProvider from './theme/AntdThemeProvider';
 
 const WaxantPrivateApp = ({ config, children }: { config: ConfigAppType; children: React.ReactNode }) => {
     initAxios(config.apiTimeout);
-    const store = getStore(config.mapReducer);
 
     return (
-        <StoreProvider store={store}>
+        <DynamicStoreProvider>
             <AppAuth keycloakConfig={config.keycloakConfig} mapRole={config.mapRole}>
                 <ErrorBoundary>
-                    <ContexteApp.Provider value={config}>
-                        <AntdThemeProvider theme={config.theme} locale={config.locale}>
-                            <AppPrivateRoutes config={config}>{children}</AppPrivateRoutes>
+                    <ContexteAppProvider config={config}>
+                        <AntdThemeProvider theme={config.theme} langue={config.langue}>
+                            <ContexteI18nProvider config={config}>
+                                <AppPrivateRoutes config={config}>{children}</AppPrivateRoutes>
+                            </ContexteI18nProvider>
                         </AntdThemeProvider>
-                    </ContexteApp.Provider>
+                    </ContexteAppProvider>
                 </ErrorBoundary>
             </AppAuth>
-        </StoreProvider>
+        </DynamicStoreProvider>
     );
 };
 

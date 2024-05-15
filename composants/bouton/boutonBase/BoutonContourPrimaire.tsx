@@ -14,6 +14,7 @@ const BoutonContourPrimaire = (props: BoutonProps) => {
             defaultHoverBorderColor: token.colorWarning,
         },
     };
+
     if (props.inactif) {
         return <BoutonContourNeutre {...props} />;
     }

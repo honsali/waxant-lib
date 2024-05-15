@@ -127,12 +127,12 @@ const Corps = styled(Row)`
 `;
 
 const Panneau = ({ titre = null, libelle = null, marge = '10px', type = 'sansContour', couleur = 'primaire', blocAction = null, children }) => {
-    const i18n = useI18n();
+    const { i18n } = useI18n();
     return (
         <Composant className={type + ' ' + couleur}>
             {(titre || libelle) && (
                 <Entete className={type + ' ' + couleur}>
-                    <Titre> {libelle || i18n.titre(titre)}</Titre>
+                    <Titre> {libelle || i18n(titre)}</Titre>
                     <Action> {blocAction}</Action>
                 </Entete>
             )}

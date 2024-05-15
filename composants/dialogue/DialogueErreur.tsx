@@ -77,14 +77,14 @@ export const SDialogueErreurFooter = styled.div`
 `;
 
 const DialogueErreur = () => {
-    const i18n = useI18n();
+    const { erreurI18n } = useI18n();
     const dispatch = useAppDispatch();
     const infoActionEchouee = useSelector(selectInfoActionEchouee);
     const [erreur, setErreur] = useState(null);
 
     useEffect(() => {
         if (util.nonNul(infoActionEchouee)) {
-            setErreur(i18n.erreur(infoActionEchouee));
+            setErreur(erreurI18n(infoActionEchouee));
         }
     }, [infoActionEchouee]);
 

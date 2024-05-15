@@ -34,14 +34,14 @@ const Action = styled(Col)`
 `;
 
 const DemiPageGauche = ({ titre, marge = '0px', blocAction = null, children }) => {
-    const i18n = useI18n();
+    const { i18n } = useI18n();
     return (
         <Composant span={12}>
             <Retour>
                 <ActionLienRetour />
             </Retour>
             <Entete>
-                <Titre>{i18n.titre(titre)}</Titre>
+                <Titre>{i18n(titre)}</Titre>
                 <Action>{blocAction}</Action>
             </Entete>
             <Row style={{ padding: marge }}>

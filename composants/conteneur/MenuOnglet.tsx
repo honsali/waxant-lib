@@ -47,7 +47,7 @@ const Composant = styled(Tabs)`
 `;
 
 const MenuOnglet = ({ ongletActif = null, siOngletChange = null, children }) => {
-    const i18n = useI18n();
+    const { i18n } = useI18n();
     const [activeKey, setActiveKey] = useState();
 
     const attributs = {} as any;
@@ -69,7 +69,7 @@ const MenuOnglet = ({ ongletActif = null, siOngletChange = null, children }) => 
             ) : (
                 <span>
                     {c.props.icon && <Avatar className="tab-title" shape="circle" src={<Icon component={c.props.icon} />} size={18} />}
-                    {i18n.libelle('onglet.' + c.key)}
+                    {c.props.badge || i18n('onglet.' + c.key)}
                 </span>
             );
             return { label: tab, key: c.key, children: c.props.children };

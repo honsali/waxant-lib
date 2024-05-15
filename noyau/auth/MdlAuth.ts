@@ -1,5 +1,6 @@
 import { PayloadAction, createSelector, createSlice } from '@reduxjs/toolkit';
 import _ from 'lodash';
+import { IRootState } from '../redux/StoreDynamique';
 import { IUser } from './DomaineAuth';
 
 const initialState = {
@@ -40,7 +41,7 @@ export const AuthSlice = createSlice({
     },
 });
 
-const selectMdlAuthState = (state) => state.mdlAuth;
+const selectMdlAuthState = (state: IRootState) => state.mdlAuth;
 
 export const selectRole = createSelector([selectMdlAuthState], (state: AuthStateType) => state.role);
 

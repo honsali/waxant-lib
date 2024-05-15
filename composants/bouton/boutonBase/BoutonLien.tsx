@@ -1,7 +1,8 @@
 import { Button } from 'antd';
 import { ReactElement } from 'react';
-import { useNavigate } from 'react-router';
 import styled from 'styled-components';
+import { PageDefinition } from 'waxant/noyau/routes/PageDefinition';
+import useGoToPage from 'waxant/noyau/routes/useGoToPage';
 import useI18n from '../../../noyau/i18n/useI18n';
 
 const ComposantActif = styled(Button)`
@@ -50,30 +51,30 @@ interface BoutonProps {
     icone?: ReactElement;
     inactif?: boolean;
     visible?: boolean;
-    vers?: string;
+    vers?: { page: PageDefinition; args?: any };
 }
 
 const BoutonLien = ({ nom, action, couleur = 'primaire', type = 'contour', libelle, icone, inactif = false, visible = true, vers = null }: BoutonProps) => {
-    const i18n = useI18n();
-    const navigate = useNavigate();
+    const { i18n } = useI18n();
+    const goToPage = useGoToPage();
     const actionLien = () => {
         if (action) {
             action();
         } else {
-            navigate(vers);
+            goToPage(vers.page, vers.args);
         }
     };
     return (
         <span className="btn-wrapper">
             {visible && !inactif && (
                 <ComposantActif type="link" icon={icone} className={type + ' ' + couleur} onClick={actionLien}>
-                    {libelle ? libelle : i18n.action(nom)}
+                    {libelle ? libelle : i18n(nom)}
                 </ComposantActif>
             )}
             {visible && inactif && (
                 <ComposantInactif className={type + ' ' + couleur}>
                     {icone}
-                    {libelle ? libelle : i18n.action(nom)}
+                    {libelle ? libelle : i18n(nom)}
                 </ComposantInactif>
             )}
         </span>

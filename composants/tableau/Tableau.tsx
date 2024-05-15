@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import _ from 'lodash';
-import React, {  useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import useContexteApp from '../../noyau/contexte/ContexteApp';
 import useI18n from '../../noyau/i18n/useI18n';
 import util from '../../noyau/util/util';
@@ -13,8 +13,24 @@ import OptionNon from '../widget/OptionNon';
 import OptionOui from '../widget/OptionOui';
 import { STable, STag } from './styles';
 
-const Tableau = ({ listeDonnee, id = null, champIdentification = 'id', texteAucunResultat = 'Aucun resultat', pagination = null, initialiser = 0, listeIndexElementSelectionne = [], indexElementSelectionne = null, siSelectionChange = null, siClicLigne = null, siChangementPage = null, sansEntete = false, scroll = null, children }) => {
-    const i18n = useI18n();
+const Tableau = ({
+    listeDonnee, //
+    id = null,
+    champIdentification = 'id',
+    texteAucunResultat = 'Aucun resultat',
+    pagination = null,
+    initialiser = 0,
+    listeIndexElementSelectionne = [],
+    indexElementSelectionne = null,
+    siSelectionChange = null,
+    siClicLigne = null,
+    siChangementPage = null,
+    sansEntete = false,
+    scroll = null,
+    children,
+    expandable = null,
+}) => {
+    const { i18n } = useI18n();
     const formatDate = useContexteApp().formatDate;
     const [tablePagination, setTablePagination] = useState({} as any);
     const [clesSelectionnees, setClesSelectionnees] = useState([]);
@@ -61,10 +77,10 @@ const Tableau = ({ listeDonnee, id = null, champIdentification = 'id', texteAucu
                         const entityName = names[names.length - 2];
                         const fieldName = names[names.length - 1];
                         c_attributs.dataIndex = [entityName, fieldName];
-                        c_attributs.title = fieldName === 'code' || fieldName === 'libelle' ? i18n.libelle(entityName) : i18n.col(entityName) + i18n.libelle(fieldName);
+                        c_attributs.title = fieldName === 'code' || fieldName === 'libelle' ? i18n(entityName) : i18n(fieldName);
                     } else {
                         c_attributs.dataIndex = c.props.nom;
-                        c_attributs.title = i18n.libelle(c.props.nom);
+                        c_attributs.title = i18n(c.props.nom);
                     }
                     c_attributs.title = c.props.libelle ? c.props.libelle : c_attributs.title;
                     c_attributs.onCell = clicLigne;
@@ -98,10 +114,20 @@ const Tableau = ({ listeDonnee, id = null, champIdentification = 'id', texteAucu
                     };
                 } else if (c.props.tc === 'code') {
                     c_attributs.render = (text) => {
-                        return i18n.libelle(text);
+                        return i18n(text);
                     };
                 } else if (c.props.tc === 'tag') {
                     c_attributs.render = (text) => <STag>{text}</STag>;
+                } else if (c.props.tc === 'textArray') {
+                    c_attributs.render = (text) => {
+                        return text?.map((t, i) => {
+                            return (
+                                <div style={{ whiteSpace: 'nowrap' }} key={i}>
+                                    {t}
+                                </div>
+                            );
+                        });
+                    };
                 } else if (c.props.tc === 'rendu') {
                     c_attributs.render = c.props.content;
                 } else if (c.props.tc === 'custom') {
@@ -235,7 +261,24 @@ const Tableau = ({ listeDonnee, id = null, champIdentification = 'id', texteAucu
         return null;
     };
 
-    return <STable id={id} columns={getColonnes()} showHeader={!sansEntete} bordered size="small" dataSource={listeDonnee} rowKey={champIdentification} onChange={handleTableChange} locale={{ emptyText: texteAucunResultat }} pagination={tablePagination} rowClassName={getRowClassName} rowSelection={getRowSelection()} scroll={scroll}></STable>;
+    return (
+        <STable
+            id={id} //
+            columns={getColonnes()}
+            showHeader={!sansEntete}
+            bordered
+            size="small"
+            dataSource={listeDonnee}
+            rowKey={champIdentification}
+            onChange={handleTableChange}
+            locale={{ emptyText: texteAucunResultat }}
+            pagination={tablePagination}
+            rowClassName={getRowClassName}
+            rowSelection={getRowSelection()}
+            scroll={scroll}
+            expandable={expandable}
+        ></STable>
+    );
 };
 
 export default Tableau;

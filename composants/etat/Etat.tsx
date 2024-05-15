@@ -11,7 +11,7 @@ const labelWidthList = { 1: 10, 2: 5, 3: 3 };
 const textWidthList = { 1: 14, 2: 7, 3: 5 };
 
 const Etat = ({ modele = null, nombreColonne = 2, afficherLesVide = true, children }) => {
-    const i18n = useI18n();
+    const { i18n } = useI18n();
     const [listeElement, setListeElement] = useState([]);
     const [nbrCol, setNbrCol] = useState(nombreColonne);
 
@@ -25,13 +25,13 @@ const Etat = ({ modele = null, nombreColonne = 2, afficherLesVide = true, childr
                 const entityName = names[names.length - 2];
                 const fieldName = names[names.length - 1];
                 if (fieldName === 'code') {
-                    return i18n.libelle(entityName); //'Code ' + i18n.libelle(entityName);
+                    return i18n(entityName); //'Code ' + i18n(entityName);
                 } else if (fieldName === 'libelle') {
-                    return i18n.libelle(entityName);
+                    return i18n(entityName);
                 }
-                return i18n.libelle(fieldName);
+                return i18n(fieldName);
             }
-            return i18n.libelle(cprops[propNom]);
+            return i18n(cprops[propNom]);
         } else {
             return 'ND';
         }
@@ -61,7 +61,7 @@ const Etat = ({ modele = null, nombreColonne = 2, afficherLesVide = true, childr
                 if (c.props.code) {
                     key = c.props.code;
                     libelle = getLibelle(c.props, 'code');
-                    text = i18n.libelle(getTexte(modele, c.props, 'code'));
+                    text = i18n(getTexte(modele, c.props, 'code'));
                 } else if (c.props.reference) {
                     key = c.props.reference;
                     libelle = getLibelle(c.props, 'reference');

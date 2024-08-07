@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import util from '../util/util';
 
-const libelle = (key: string, mapLibelle: Record<string, string>): string => {
+const libelle = (key: string, mapLibelle: Record<string, string>, safe = true): string => {
     if (util.estNul(key)) {
-        return '[]';
+        return safe ? '[]' : null;
     }
     switch (key) {
         case '_vide':
@@ -15,16 +15,10 @@ const libelle = (key: string, mapLibelle: Record<string, string>): string => {
         default:
             if (key.startsWith('libelle')) {
                 const filteredKey = key.charAt(7).toLowerCase() + key.slice(8);
-                return mapLibelle[filteredKey] || `[${filteredKey}]`;
+                return mapLibelle[filteredKey] || (safe ? `[${filteredKey}]` : null);
             }
-            return mapLibelle[key] || `[${key}]`;
+            return mapLibelle[key] || (safe ? `[${key}]` : null);
     }
-};
-const col = (key: string, mapLibelle: Record<string, string>): string => {
-    if (util.estNul(key)) {
-        return '';
-    }
-    return mapLibelle[`col_${key}`] || '';
 };
 
 const action = (key: string, mapActionUI: Record<string, string>, mapLibelle: Record<string, string>): string => {
@@ -32,7 +26,7 @@ const action = (key: string, mapActionUI: Record<string, string>, mapLibelle: Re
         return '[]';
     }
     const keyBase = key.includes('.') ? key.substring(0, key.indexOf('.')) : key;
-    return mapActionUI[key] || mapActionUI[keyBase] || libelle(key, mapLibelle);
+    return mapActionUI[key] || libelle(key, mapLibelle) || mapActionUI[keyBase];
 };
 
 const titre = (key: string, mapTitre: Record<string, string>, mapActionUI: Record<string, string>, mapLibelle: Record<string, string>): string => {
@@ -61,7 +55,6 @@ const actionCtrl = (key: string, mapActionCtrl: Record<string, string>): string 
 
 const MappeurLibelle = {
     libelle,
-    col,
     action,
     titre,
     actionCtrl,

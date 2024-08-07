@@ -1,4 +1,5 @@
 import { IErreurServeur, IInfoActionEchouee, IMessageErreur } from '../message/DomaineMessage';
+import MappeurLibelle from './MappeurLibelle';
 
 const mapContexteErreur = {
     'error.bad.request': ['Données Invalides', 'Veuillez corriger les erreurs suivantes:'],
@@ -8,24 +9,35 @@ const mapContexteErreur = {
     'error.server.error': ['Problème technique', 'Erreur Serveur, veuillez contacter votre administrateur'],
 };
 
-const trouverLibelleErreur = ({ code, args, libelle }: IErreurServeur, mapErreur: Record<string, string>): string => {
-    if (args?.length) {
-        for (const arg of args) {
-            const l = mapErreur[`${code}@${arg}`];
-            if (l) {
-                return l;
+const trouverLibelleErreur = (erreurServeur: IErreurServeur, mapErreur: Record<string, string>, mapLibelle: Record<string, string>): string => {
+    let es = mapErreur[erreurServeur.code];
+    if (!es) {
+        return erreurServeur.libelle || erreurServeur.code;
+    }
+
+    if (erreurServeur.arguments?.length) {
+        for (const arg of erreurServeur.arguments) {
+            let al = MappeurLibelle.libelle(arg, mapLibelle, false);
+
+            if (!al && arg.includes('.')) {
+                const idx = arg.indexOf('.');
+                al = MappeurLibelle.libelle(arg.substring(idx + 1), mapLibelle, false);
+            }
+
+            if (al) {
+                es += ` ${al}`;
             }
         }
     }
-    return libelle || mapErreur[code] || code;
+    return es;
 };
 
-const get = ({ code, listeErreurServeur, listeErreurDirecte, erreur }: IInfoActionEchouee, mapErreur: Record<string, string>): IMessageErreur => {
+const get = ({ code, listeErreurServeur, listeErreurDirecte, erreur }: IInfoActionEchouee, mapErreur: Record<string, string>, mapLibelle: Record<string, string>): IMessageErreur => {
     const e = mapContexteErreur[code];
     if (e) {
         const messageErreur: IMessageErreur = { titre: e[0], sousTitre: e[1], listeErreur: [] };
         if (listeErreurServeur?.length) {
-            messageErreur.listeErreur = listeErreurServeur.map((err) => trouverLibelleErreur(err, mapErreur));
+            messageErreur.listeErreur = listeErreurServeur.map((err) => trouverLibelleErreur(err, mapErreur, mapLibelle));
         }
 
         if (listeErreurDirecte?.length) {
@@ -35,6 +47,7 @@ const get = ({ code, listeErreurServeur, listeErreurDirecte, erreur }: IInfoActi
             const erreurTexte = mapErreur[erreur] || `[${erreur}]`;
             messageErreur.listeErreur.push(erreurTexte);
         }
+
         return messageErreur;
     }
     return { titre: 'ERROR', sousTitre: JSON.stringify({ code, listeErreurServeur, listeErreurDirecte, erreur }), listeErreur: [] };

@@ -1,4 +1,4 @@
-import { Row } from 'antd';
+import {Row, Space} from 'antd';
 import _ from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 import useI18n from '../../noyau/i18n/useI18n';
@@ -11,7 +11,7 @@ const labelWidthList = { 1: 10, 2: 5, 3: 3 };
 const textWidthList = { 1: 14, 2: 7, 3: 5 };
 
 const Etat = ({ modele = null, nombreColonne = 2, afficherLesVide = true, children }) => {
-    const i18n = useI18n();
+    const { i18n } = useI18n();
     const [listeElement, setListeElement] = useState([]);
     const [nbrCol, setNbrCol] = useState(nombreColonne);
 
@@ -25,13 +25,13 @@ const Etat = ({ modele = null, nombreColonne = 2, afficherLesVide = true, childr
                 const entityName = names[names.length - 2];
                 const fieldName = names[names.length - 1];
                 if (fieldName === 'code') {
-                    return i18n.libelle(entityName); //'Code ' + i18n.libelle(entityName);
+                    return i18n(entityName); //'Code ' + i18n(entityName);
                 } else if (fieldName === 'libelle') {
-                    return i18n.libelle(entityName);
+                    return i18n(entityName);
                 }
-                return i18n.libelle(fieldName);
+                return i18n(fieldName);
             }
-            return i18n.libelle(cprops[propNom]);
+            return i18n(cprops[propNom]);
         } else {
             return 'ND';
         }
@@ -61,12 +61,12 @@ const Etat = ({ modele = null, nombreColonne = 2, afficherLesVide = true, childr
                 if (c.props.code) {
                     key = c.props.code;
                     libelle = getLibelle(c.props, 'code');
-                    text = i18n.libelle(getTexte(modele, c.props, 'code'));
+                    text = i18n(getTexte(modele, c.props, 'code'));
                 } else if (c.props.reference) {
                     key = c.props.reference;
                     libelle = getLibelle(c.props, 'reference');
                     text = getTexte(modele, c.props, 'reference');
-                    text = text?.libelle;
+                    text = util.nonNul(text?.libelle) ? text.libelle : '-';
                 } else if (c.props.ouiNon) {
                     key = c.props.ouiNon;
                     libelle = getLibelle(c.props, 'ouiNon');
@@ -88,7 +88,7 @@ const Etat = ({ modele = null, nombreColonne = 2, afficherLesVide = true, childr
                     key = c.props.police;
                     libelle = getLibelle(c.props, 'police');
                     const p = _.get(modele, c.props.police);
-                    if (p) {
+                    if (util.nonVide(p)) {
                         text = p['categoriePolice'] + '/' + p['numeroPolice'];
                     } else {
                         text = '-';
@@ -102,7 +102,16 @@ const Etat = ({ modele = null, nombreColonne = 2, afficherLesVide = true, childr
                             {libelle}
                         </SLibelle>
                     );
-                    if (util.estVide(c.props.nowrap)) {
+                    if (c.props.actionModifier) {
+                        rowliste.push(
+                            <SValeur span={textWidth} key={'val' + key}>
+                                <Space>
+                                    <span>{text}</span>
+                                    <span>{c.props.actionModifier}</span>
+                                </Space>
+                            </SValeur>
+                        );
+                    } else if (util.estVide(c.props.nowrap)) {
                         rowliste.push(
                             <SValeur span={textWidth} key={'val' + key}>
                                 {text}

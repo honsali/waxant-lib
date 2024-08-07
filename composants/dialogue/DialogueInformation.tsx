@@ -65,12 +65,12 @@ const SErreur = styled(Col)`
 `;
 
 const DialogueInformation = ({ visible, nom, libelle = null, icone = null, entete = null, actionAnnuler = null, largeur = 520, children }) => {
-    const i18n = useI18n();
+    const { i18n } = useI18n();
     const getTitre = () => {
         return (
             <span>
                 {icone && <SAvatar shape="circle" src={icone} size={32} />}
-                {libelle || i18n.titre(nom)}
+                {libelle || i18n(nom)}
             </span>
         );
     };

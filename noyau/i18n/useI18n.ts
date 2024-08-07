@@ -1,27 +1,48 @@
-import React from 'react';
-import useContexteApp from '../contexte/ContexteApp';
+import { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { IInfoActionEchouee, IInfoActionReussie, IMessageErreur } from '../message/DomaineMessage';
 import MappeurErreur from './MappeurErreur';
 import MappeurInfoActionReussie from './MappeurInfoActionReussie';
 import MappeurLibelle from './MappeurLibelle';
+import { erreurI18nSelecteur, infoActionI18nSelecteur, libelleI18nSelecteur } from './MdlI18n';
 
 const useI18n = () => {
-    const { mapLibelle, mapActionCtrl, mapActionUI, mapTitre, mapErreur, mapMessage } = useContexteApp();
-
-    const i18n = React.useMemo(
-        () => ({
-            libelle: (key: string): string => MappeurLibelle.libelle(key, mapLibelle),
-            col: (key: string): string => MappeurLibelle.col(key, mapLibelle),
-            action: (key: string): string => MappeurLibelle.action(key, mapActionUI, mapLibelle),
-            titre: (key: string): string => MappeurLibelle.titre(key, mapTitre, mapActionUI, mapLibelle),
-            actionCtrl: (key: string): string => MappeurLibelle.actionCtrl(key, mapActionCtrl),
-            erreur: (infoActionEchouee: IInfoActionEchouee): IMessageErreur => MappeurErreur.get(infoActionEchouee, mapErreur),
-            message: (infoActionReusie: IInfoActionReussie): string => MappeurInfoActionReussie.get(infoActionReusie, mapMessage, mapLibelle),
-        }),
-        [mapLibelle, mapActionCtrl, mapActionUI, mapTitre, mapErreur, mapMessage]
+    const mapLibelleI18n = useSelector(libelleI18nSelecteur);
+    const mapErreurI18n = useSelector(erreurI18nSelecteur);
+    const mapInfoActionI18n = useSelector(infoActionI18nSelecteur);
+    const i18n = useCallback(
+        (key: string): string => {
+            const lib = MappeurLibelle.libelle(key, mapLibelleI18n);
+            if (lib && lib.indexOf('[') === 0) {
+                console.log(key + ' === ' + lib);
+            }
+            return lib;
+        },
+        [mapLibelleI18n]
     );
 
-    return i18n;
+    const erreurI18n = useCallback(
+        (key: IInfoActionEchouee): IMessageErreur => {
+            return MappeurErreur.get(key, mapErreurI18n, mapLibelleI18n);
+        },
+        [mapErreurI18n]
+    );
+
+    const infoActionI18n = useCallback(
+        (key: IInfoActionReussie): string => {
+            return MappeurInfoActionReussie.get(key, mapInfoActionI18n, mapLibelleI18n);
+        },
+        [mapLibelleI18n, mapInfoActionI18n]
+    );
+
+    const journalI18n = useCallback(
+        (key: string): string => {
+            return MappeurLibelle.actionCtrl(key, mapLibelleI18n);
+        },
+        [mapLibelleI18n]
+    );
+
+    return { i18n, erreurI18n, infoActionI18n, journalI18n };
 };
 
 export default useI18n;

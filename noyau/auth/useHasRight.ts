@@ -6,13 +6,11 @@ import { selectRole } from './MdlAuth';
 const useHasRight = (action): boolean => {
     const waxantConfig = useContexteApp();
     const role = useSelector(selectRole);
-    const inAll = _.includes(waxantConfig.mapDroitAcces['ALL'], action);
     const inRole = _.includes(waxantConfig.mapDroitAcces[role], action);
-    const hr = inAll || inRole;
-    if (!hr) {
+    if (!inRole) {
         console.log('NO RIGHT FOR =========>' + action);
     }
-    return hr;
+    return inRole;
 };
 
 export default useHasRight;

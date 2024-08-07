@@ -5,7 +5,6 @@ import FormulaireValidateur from '../FormulaireValidateur';
 
 const ChampTexte = (props) => {
     const validateur = useContext(FormulaireValidateur);
-
     const getRules = () => {
         const n = _.isArray(props.attributes.name) ? _.join(props.attributes.name, '.') : props.attributes.name;
         if (props.attributes.requis || (validateur && validateur[n] && validateur[n].requis)) {
@@ -20,7 +19,7 @@ const ChampTexte = (props) => {
         }
     };
     return (
-        <Form.Item {...props.attributes} rules={[getRules]} style={{ ...props.attributes.style }}>
+        <Form.Item key={props.attributes.cname} {...props.attributes} rules={[getRules]} style={{ ...props.attributes.style }}>
             <Input
                 style={props.largeur ? { width: props.largeur + 'px' } : {}} //
                 className={'champ-' + props.attributes.cls}

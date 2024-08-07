@@ -68,31 +68,15 @@ const SErreur = styled(Col)`
     margin-bottom: 10px;
 `;
 
-const BlocBouton = styled.div`
-    line-height: 0;
-    .btn-wrapper {
-        margin: 0 5px;
-    }
-    .btn-wrapper:first-child {
-        margin: 0 5px 0 0;
-    }
-    .btn-wrapper:last-child {
-        margin: 0 0 0 5px;
-    }
-    .btn-wrapper:only-child {
-        margin: 0;
-    }
-`;
-
-const Dialogue = ({ visible, nom, libelle = null, icone = null, entete = null, nomActionConfirmer = 'confirmer', actionConfirmer, nomActionAnnuler = 'annuler', actionAnnuler = null, largeur = 520, rid = null, children }) => {
-    const i18n = useI18n();
+const Dialogue = ({ visible, nom, libelle = null, icone = null, entete = null, nomActionConfirmer = 'confirmer', actionConfirmer, nomActionAnnuler = 'annuler', actionAnnuler = null, largeur = 520, rid = null, inactif = null, children }) => {
+    const { i18n, erreurI18n } = useI18n();
     const infoActionEchouee = useSelector(selectInfoActionEchoueeDansDialogue);
     const dispatch = useAppDispatch();
     const [erreur, setErreur] = useState(null);
 
     useEffect(() => {
         if (util.nonNul(infoActionEchouee)) {
-            setErreur(i18n.erreur(infoActionEchouee));
+            setErreur(erreurI18n(infoActionEchouee));
         }
     }, [infoActionEchouee]);
 
@@ -104,7 +88,7 @@ const Dialogue = ({ visible, nom, libelle = null, icone = null, entete = null, n
         return (
             <span>
                 {icone && <SAvatar shape="circle" src={icone} size={32} />}
-                {libelle || i18n.titre(nom)}
+                {libelle || i18n(nom)}
             </span>
         );
     };
@@ -123,13 +107,13 @@ const Dialogue = ({ visible, nom, libelle = null, icone = null, entete = null, n
         return (
             <Space>
                 <BoutonContourPrimaire nom={nomActionAnnuler} action={actionAnnuler} inactif={rid} />
-                <BoutonPleinPrimaire nom={nomActionConfirmer} contexte={nom} action={actionConfirmer} rid={rid} />
+                <BoutonPleinPrimaire nom={nomActionConfirmer} contexte={nom} action={actionConfirmer} rid={rid} inactif={inactif} />
             </Space>
         );
     };
 
     return (
-        <Composant open={visible} title={getTitre()} footer={getFooter()} width={largeur} maskClosable={false} onCancel={actionAnnuler}>
+        <Composant open={visible} title={getTitre()} footer={getFooter()} width={largeur} maskClosable={false} onCancel={actionAnnuler} closable={false}>
             {getEntete()}
             {erreur && (
                 <Row>

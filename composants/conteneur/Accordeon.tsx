@@ -1,5 +1,5 @@
-import { Collapse, CollapseProps } from 'antd';
-import { useEffect, useState } from 'react';
+import { Collapse } from 'antd';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 export const Composant = styled(Collapse)`
@@ -52,9 +52,10 @@ export const Composant = styled(Collapse)`
 const Accordeon = (props) => {
     const [items, setItems] = useState(null);
     const [blocCourant, setBlocCourant] = useState([]);
+    const previousBlocCourantRef = useRef([]);
 
     useEffect(() => {
-        const liste: CollapseProps['items'] = [];
+        const liste = [];
         props.children.forEach((c) => {
             if (c && c.props.id) {
                 liste.push({
@@ -67,19 +68,34 @@ const Accordeon = (props) => {
         });
         setItems(liste);
         if (blocCourant?.length === 0) {
-            setBlocCourant(liste?.length > 0 ? [liste[0].key] : null);
+            const c = liste?.length > 0 ? [liste[0].key] : null;
+            setBlocCourant(c);
+            update(c);
         }
     }, [props.children]);
 
-    const init = () => {};
-    const siChange = (v) => {
-        const nouveau = v?.length > 0 ? v[0] : null;
-        const courant = blocCourant?.length > 0 ? blocCourant[0] : null;
-        setBlocCourant(v);
-        if (props.siChange) {
+    useEffect(() => {
+        setBlocCourant(props.blocOuvert);
+        update(props.blocOuvert);
+    }, [props.blocOuvert]);
+
+    const update = (x) => {
+        const previousBlocCourant = previousBlocCourantRef.current;
+        const courant = previousBlocCourant?.length > 0 ? previousBlocCourant[0] : null;
+        const nouveau = x?.length > 0 ? x[0] : null;
+
+        if (props.siChange && courant !== nouveau) {
             props.siChange(courant, nouveau);
         }
+
+        previousBlocCourantRef.current = x;
     };
+
+    const siChange = (v) => {
+        setBlocCourant(v);
+        update(v);
+    };
+
     return <Composant items={items} accordion activeKey={blocCourant} expandIconPosition={'end'} bordered={false} onChange={siChange}></Composant>;
 };
 

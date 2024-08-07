@@ -83,20 +83,20 @@ const BlocBouton = styled.div`
 `;
 
 const DialogueActions = ({ visible, nom, libelle = null, icone = null, entete = null, getActions, actionAnnuler, largeur = 520, children }) => {
-    const i18n = useI18n();
+    const { i18n, erreurI18n } = useI18n();
     const infoActionEchouee = useSelector(selectInfoActionEchoueeDansDialogue);
     const [erreur, setErreur] = useState(null);
 
     useEffect(() => {
         if (util.nonNul(infoActionEchouee)) {
-            setErreur(i18n.erreur(infoActionEchouee));
+            setErreur(erreurI18n(infoActionEchouee));
         }
     }, [infoActionEchouee]);
     const getTitre = () => {
         return (
             <span>
                 {icone && <SAvatar shape="circle" src={icone} size={32} />}
-                {libelle || i18n.titre(nom)}
+                {libelle || i18n(nom)}
             </span>
         );
     };

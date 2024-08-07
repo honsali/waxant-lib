@@ -5,7 +5,7 @@ import useI18n from '../i18n/useI18n';
 import useAppDispatch from '../redux/useAppDispatch';
 
 export default function PageNotAuthorized() {
-    const i18n = useI18n();
+    const { i18n } = useI18n();
     const dispatch = useAppDispatch();
     const { keycloak } = useKeycloak();
     const logout = () => {
@@ -20,7 +20,7 @@ export default function PageNotAuthorized() {
             subTitle="Page Non Authorisée"
             extra={
                 <Button type="primary" danger onClick={logout}>
-                    {i18n.action('logout')}
+                    {i18n('global.action.logout')}
                 </Button>
             }
         />

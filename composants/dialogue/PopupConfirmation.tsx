@@ -5,6 +5,7 @@ import useI18n from '../../noyau/i18n/useI18n';
 import util from '../../noyau/util/util';
 import BlocActionDroit from '../bouton/BlocActionDroit';
 import EnumTypeAction from '../bouton/EnumTypeAction';
+import ActionCritique from '../bouton/actionBase/ActionCritique';
 import ActionForte from '../bouton/actionBase/ActionForte';
 import ActionImportante from '../bouton/actionBase/ActionImportante';
 import BoutonContourPrimaire from '../bouton/boutonBase/BoutonContourPrimaire';
@@ -25,7 +26,7 @@ const SCorp = styled.div`
     font-weight: bold;
 `;
 const PopupConfirmation = ({ nom, libelle = null, icone = null, entete = null, actionConfirmer, rid = null, inactif = false, widthBoutonAction = null, typeAction = EnumTypeAction.FORTE }) => {
-    const i18n = useI18n();
+    const { i18n } = useI18n();
     const [visible, setVisible] = useState(false);
 
     useEffect(() => {
@@ -47,7 +48,7 @@ const PopupConfirmation = ({ nom, libelle = null, icone = null, entete = null, a
             <div>
                 <SEntete>
                     {icone} &nbsp;
-                    {libelle || i18n.titre(nom)}
+                    {libelle || i18n(nom)}
                 </SEntete>
                 <SCorp>{entete}</SCorp>
                 <BlocActionDroit padding="10px">
@@ -62,6 +63,7 @@ const PopupConfirmation = ({ nom, libelle = null, icone = null, entete = null, a
         <Composant open={visible} content={getContent()} trigger="click" overlayInnerStyle={{ padding: 0 }}>
             {typeAction === EnumTypeAction.FORTE && <ActionForte width={widthBoutonAction} nom={nom} icone={icone} rid={visible ? '1' : null} action={confirmer} inactif={inactif} />}
             {typeAction === EnumTypeAction.IMPORTANTE && <ActionImportante width={widthBoutonAction} nom={nom} icone={icone} rid={visible ? '1' : null} action={confirmer} inactif={inactif} />}
+            {typeAction === EnumTypeAction.CRITIQUE && <ActionCritique width={widthBoutonAction} nom={nom} icone={icone} rid={visible ? '1' : null} action={confirmer} inactif={inactif} />}
         </Composant>
     );
 };

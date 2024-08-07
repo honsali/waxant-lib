@@ -2,6 +2,7 @@ import { Col, Row } from 'antd';
 import _ from 'lodash';
 import { useCallback } from 'react';
 import styled from 'styled-components';
+import useContexteView from 'waxant/noyau/contexte/ContexteView';
 import useI18n from '../../noyau/i18n/useI18n';
 
 const Composant = styled.div`
@@ -61,7 +62,8 @@ const TagEtat = styled.span`
 `;
 
 const PanneauMaitre = ({ titre = null, libelle = null, etat = null, blocAction = null, children }) => {
-    const i18n = useI18n();
+    const { i18n } = useI18n();
+    const { uc } = useContexteView();
     const getContent = useCallback(() => {
         if (_.isArray(children)) {
             return children.map((c) => {
@@ -88,7 +90,7 @@ const PanneauMaitre = ({ titre = null, libelle = null, etat = null, blocAction =
     return (
         <Composant>
             <Entete>
-                <Titre> {libelle || i18n.titre(titre)}</Titre>
+                <Titre flex="none"> {libelle || (titre && i18n(titre)) || i18n(uc + '.titre')}</Titre>
                 {etat && <TagEtat>{etat}</TagEtat>}
                 <Action>{blocAction}</Action>
             </Entete>

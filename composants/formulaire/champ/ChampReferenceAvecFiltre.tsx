@@ -33,9 +33,9 @@ const ChampReferenceAvecFiltre = (props) => {
             setSelectAttributes({ ...attributes, name: attributes.sname });
             const refOptionList = [];
             const ref = reference ? reference : attributes.lname;
-            listerReference({ reference: ref, arg: arg.code }).then((liste) => {
-                setReferenceListe(liste);
-                liste.forEach((r) => {
+            listerReference({ reference: ref, arg: arg.code }).then((lst) => {
+                setReferenceListe(lst);
+                lst.forEach((r) => {
                     const libelle = optionLibelle ? r[optionLibelle] : r.libelle;
                     const code = r.code ? r.code : '-1';
                     refOptionList.push(
@@ -46,7 +46,7 @@ const ChampReferenceAvecFiltre = (props) => {
                 });
                 setOptions(refOptionList);
                 const z = form.getFieldValue(attributes.name);
-                setReference(liste, z, false);
+                setReference(lst, z, false);
             });
         } else {
             setReferenceListe([]);
@@ -84,7 +84,7 @@ const ChampReferenceAvecFiltre = (props) => {
             }
 
             if (notifier && attributes.onChange) {
-                attributes.onChange(reference);
+                attributes.onChange(x);
             }
         }
     };

@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import { AppDispatch } from './redux.config';
+import { AppDispatch } from './StoreDynamique';
 
 const useAppDispatch = () => useDispatch<AppDispatch>();
 

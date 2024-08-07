@@ -49,10 +49,10 @@ const ChampReference = (props) => {
         setReference(referenceListe, { code: null });
     };
 
-    const setReference = (liste, a) => {
-        if (liste && liste.length > 0 && a?.code !== current?.code) {
-            setCurrent(a);
-            let x = a?.code ? _.find(liste, { code: a.code }) : {};
+    const setReference = (liste, valeur) => {
+        if (liste && liste.length > 0 && valeur?.code !== current?.code) {
+            setCurrent(valeur);
+            let x = valeur?.code ? _.find(liste, { code: valeur.code }) : {};
             if (util.estVide(x)) {
                 x = { id: null, code: null, libelle: null };
             }
@@ -69,6 +69,7 @@ const ChampReference = (props) => {
                 d[attributes.sname] = x?.libelle;
                 form.setFieldsValue(d);
             }
+
             if (attributes.onChange) {
                 attributes.onChange(x);
             }

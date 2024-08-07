@@ -1,5 +1,6 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import _ from 'lodash';
+import { IRootState } from '../redux/StoreDynamique';
 import { IInfoActionEchouee, IInfoActionReussie } from './DomaineMessage';
 
 const initialState = {
@@ -40,7 +41,7 @@ export const MessageSlice = createSlice({
     },
 });
 
-const selectMdlMessageState = (state) => state.mdlMessage;
+const selectMdlMessageState = (state: IRootState) => state.mdlMessage;
 
 export const selectInfoActionEchouee = createSelector([selectMdlMessageState], (state: MessageStateType) => state.infoActionEchouee);
 export const selectInfoActionEchoueeDansDialogue = createSelector([selectMdlMessageState], (state: MessageStateType) => state.infoActionEchoueeDansDialogue);

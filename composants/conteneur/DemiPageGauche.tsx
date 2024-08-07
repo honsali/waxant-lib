@@ -5,6 +5,7 @@ import ActionLienRetour from '../bouton/actionMetier/ActionLienRetour';
 
 const Composant = styled(Col)`
     padding: 20px 40px 80px 40px;
+    margin-bottom: 100px;
 `;
 
 const Retour = styled(Row)`
@@ -34,14 +35,14 @@ const Action = styled(Col)`
 `;
 
 const DemiPageGauche = ({ titre, marge = '0px', blocAction = null, children }) => {
-    const i18n = useI18n();
+    const { i18n } = useI18n();
     return (
         <Composant span={12}>
             <Retour>
                 <ActionLienRetour />
             </Retour>
             <Entete>
-                <Titre>{i18n.titre(titre)}</Titre>
+                <Titre>{i18n(titre)}</Titre>
                 <Action>{blocAction}</Action>
             </Entete>
             <Row style={{ padding: marge }}>

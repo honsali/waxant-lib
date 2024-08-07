@@ -4,9 +4,9 @@ import useI18n from '../../../noyau/i18n/useI18n';
 import ActionForte from '../actionBase/ActionForte';
 
 const ActionEnregistrer = ({ typeEntite, action, rid = null }) => {
-    const i18n = useI18n();
+    const { i18n } = useI18n();
     return (
-        <Popconfirm title={i18n.libelle('confirmer.enregistrer.' + typeEntite)} onConfirm={action} okText="Confirmer" cancelText="Annuler">
+        <Popconfirm title={i18n('confirmer.enregistrer.' + typeEntite)} onConfirm={action} okText="Confirmer" cancelText="Annuler">
             <ActionForte nom={'enregistrer.' + typeEntite} icone={<SaveOutlined />} action={action} rid={rid} />
         </Popconfirm>
     );

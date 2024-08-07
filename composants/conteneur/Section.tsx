@@ -1,5 +1,6 @@
 import { Col, Row } from 'antd';
 import styled from 'styled-components';
+import useContexteView from 'waxant/noyau/contexte/ContexteView';
 import useContexteApp from '../../noyau/contexte/ContexteApp';
 import useI18n from '../../noyau/i18n/useI18n';
 import ActionLienRetour from '../bouton/actionMetier/ActionLienRetour';
@@ -24,9 +25,10 @@ const Titre = styled(Col)`
 `;
 
 const Section = ({ titre = null, libelle = null, marge = '0px', blocAction = null, actionRetour = null, children }) => {
-    const i18n = useI18n();
+    const { i18n } = useI18n();
+    const { uc } = useContexteView();
     const appName = useContexteApp().appName;
-    document.title = appName + ' ' + (titre ? i18n.titre(titre) : '');
+    document.title = appName + ' ' + (titre ? i18n(titre) : '');
 
     return (
         <Composant>
@@ -38,7 +40,7 @@ const Section = ({ titre = null, libelle = null, marge = '0px', blocAction = nul
                 </Row>
             )}
             <Row>
-                <Titre flex="none">{libelle || i18n.titre(titre)}</Titre>
+                <Titre flex="none"> {libelle || (titre && i18n(titre)) || i18n(uc + '.titre')}</Titre>
                 <Col flex="auto">
                     <div>{blocAction}</div>
                 </Col>

@@ -2,8 +2,9 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import _ from 'lodash';
-import React, {  useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import useContexteApp from '../../noyau/contexte/ContexteApp';
+import { ContexteBoutonProvider } from '../../noyau/contexte/ContexteBouton';
 import useI18n from '../../noyau/i18n/useI18n';
 import util from '../../noyau/util/util';
 import ActionTableauConsulter from '../bouton/actionMetier/ActionTableauConsulter';
@@ -13,9 +14,26 @@ import OptionNon from '../widget/OptionNon';
 import OptionOui from '../widget/OptionOui';
 import { STable, STag } from './styles';
 
-const Tableau = ({ listeDonnee, id = null, champIdentification = 'id', texteAucunResultat = 'Aucun resultat', pagination = null, initialiser = 0, listeIndexElementSelectionne = [], indexElementSelectionne = null, siSelectionChange = null, siClicLigne = null, siChangementPage = null, sansEntete = false, scroll = null, children }) => {
-    const i18n = useI18n();
+const Tableau = ({
+    listeDonnee, //
+    id = null,
+    champIdentification = 'id',
+    texteAucunResultat = 'Aucun resultat',
+    pagination = null,
+    initialiser = 0,
+    listeIndexElementSelectionne = [],
+    indexElementSelectionne = null,
+    siSelectionChange = null,
+    siClicLigne = null,
+    siChangementPage = null,
+    sansEntete = false,
+    scroll = null,
+    children,
+    expandable = null,
+}) => {
+    const { i18n } = useI18n();
     const formatDate = useContexteApp().formatDate;
+    const formatDateTime = useContexteApp().formatDateTime;
     const [tablePagination, setTablePagination] = useState({} as any);
     const [clesSelectionnees, setClesSelectionnees] = useState([]);
     dayjs.extend(duration);
@@ -29,6 +47,17 @@ const Tableau = ({ listeDonnee, id = null, champIdentification = 'id', texteAucu
         } else {
             const m = dayjs(text, formatDate);
             return m.format(formatDate);
+        }
+    };
+
+    const formaterDateTime = (text) => {
+        if (_.isEmpty(text)) {
+            return '';
+        } else if (dayjs.isDayjs(text)) {
+            return text.format(formatDateTime);
+        } else {
+            const m = dayjs(text);
+            return m.isValid() ? m.format(formatDateTime) : '';
         }
     };
 
@@ -61,10 +90,10 @@ const Tableau = ({ listeDonnee, id = null, champIdentification = 'id', texteAucu
                         const entityName = names[names.length - 2];
                         const fieldName = names[names.length - 1];
                         c_attributs.dataIndex = [entityName, fieldName];
-                        c_attributs.title = fieldName === 'code' || fieldName === 'libelle' ? i18n.libelle(entityName) : i18n.col(entityName) + i18n.libelle(fieldName);
+                        c_attributs.title = fieldName === 'code' || fieldName === 'libelle' ? i18n(entityName) : i18n(fieldName);
                     } else {
                         c_attributs.dataIndex = c.props.nom;
-                        c_attributs.title = i18n.libelle(c.props.nom);
+                        c_attributs.title = i18n(c.props.nom);
                     }
                     c_attributs.title = c.props.libelle ? c.props.libelle : c_attributs.title;
                     c_attributs.onCell = clicLigne;
@@ -79,6 +108,10 @@ const Tableau = ({ listeDonnee, id = null, champIdentification = 'id', texteAucu
                 if (c.props.tc === 'date') {
                     c_attributs.render = (text) => {
                         return formaterDate(text);
+                    };
+                } else if (c.props.tc === 'dateTime') {
+                    c_attributs.render = (text) => {
+                        return formaterDateTime(text);
                     };
                 } else if (c.props.tc === 'reference') {
                     c_attributs.render = (text) => {
@@ -98,10 +131,20 @@ const Tableau = ({ listeDonnee, id = null, champIdentification = 'id', texteAucu
                     };
                 } else if (c.props.tc === 'code') {
                     c_attributs.render = (text) => {
-                        return i18n.libelle(text);
+                        return i18n(text);
                     };
                 } else if (c.props.tc === 'tag') {
                     c_attributs.render = (text) => <STag>{text}</STag>;
+                } else if (c.props.tc === 'textArray') {
+                    c_attributs.render = (text) => {
+                        return text?.map((t, i) => {
+                            return (
+                                <div style={{ whiteSpace: 'nowrap' }} key={i}>
+                                    {t}
+                                </div>
+                            );
+                        });
+                    };
                 } else if (c.props.tc === 'rendu') {
                     c_attributs.render = c.props.content;
                 } else if (c.props.tc === 'custom') {
@@ -173,6 +216,13 @@ const Tableau = ({ listeDonnee, id = null, champIdentification = 'id', texteAucu
                     c_attributs.title = '';
                     c_attributs.width = 42;
                     c_attributs.className = 'colonneAction';
+                } else {
+                    c_attributs.render = (text) => {
+                        return util.nonNul(text) ? text : '';
+                    };
+                }
+                if (c.props.trier) {
+                    c_attributs.sorter = c.props.trier;
                 }
                 colonnes.push(c_attributs);
             }
@@ -185,6 +235,10 @@ const Tableau = ({ listeDonnee, id = null, champIdentification = 'id', texteAucu
             siChangementPage(pagination.current);
         }
     };
+
+    useEffect(() => {
+        setClesSelectionnees([]);
+    }, [listeDonnee]);
 
     useEffect(() => {
         if (pagination) {
@@ -235,7 +289,26 @@ const Tableau = ({ listeDonnee, id = null, champIdentification = 'id', texteAucu
         return null;
     };
 
-    return <STable id={id} columns={getColonnes()} showHeader={!sansEntete} bordered size="small" dataSource={listeDonnee} rowKey={champIdentification} onChange={handleTableChange} locale={{ emptyText: texteAucunResultat }} pagination={tablePagination} rowClassName={getRowClassName} rowSelection={getRowSelection()} scroll={scroll}></STable>;
+    return (
+        <ContexteBoutonProvider type="tableau">
+            <STable
+                id={id} //
+                columns={getColonnes()}
+                showHeader={!sansEntete}
+                bordered
+                size="small"
+                dataSource={listeDonnee}
+                rowKey={champIdentification}
+                onChange={handleTableChange}
+                locale={{ emptyText: texteAucunResultat }}
+                pagination={tablePagination}
+                rowClassName={getRowClassName}
+                rowSelection={getRowSelection()}
+                scroll={scroll}
+                expandable={expandable}
+            ></STable>
+        </ContexteBoutonProvider>
+    );
 };
 
 export default Tableau;

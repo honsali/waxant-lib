@@ -9,7 +9,7 @@ export interface IErreurServeur {
     code?: string;
     severity?: string;
     params?: [];
-    args?: [];
+    arguments?: string[];
     data?: any;
     libelle?: string;
 }

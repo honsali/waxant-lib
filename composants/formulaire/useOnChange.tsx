@@ -6,7 +6,7 @@ const useOnchange = (fieldName, form, process) => {
 
     useEffect(() => {
         process(form.getFieldValue(fieldName));
-    }, [fieldValue, process]);
+    }, [fieldValue]);
 };
 
 export default useOnchange;

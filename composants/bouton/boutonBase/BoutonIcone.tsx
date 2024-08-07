@@ -1,6 +1,7 @@
 import { Button, Tooltip } from 'antd';
-import { ReactElement } from 'react';
 import styled from 'styled-components';
+import { PageDefinition } from 'waxant/noyau/routes/PageDefinition';
+import useGoToPage from 'waxant/noyau/routes/useGoToPage';
 import useI18n from '../../../noyau/i18n/useI18n';
 
 const Composant = styled(Button)`
@@ -69,26 +70,41 @@ const Composant = styled(Button)`
 `;
 
 export interface BoutonIconeProps {
-    nom?: string;
-    action?: (event) => void;
+    nom?: string | null;
+    action?: (event) => void | null;
     couleur?: 'primaire' | 'secondaire';
     type?: 'contour' | 'plein' | 'simple';
-    libelle?: string;
-    icone?: ReactElement;
-    inactif?: boolean;
+    page?: PageDefinition | null;
+    modele?: any | null;
+    libelle?: string | null;
+    icone?: React.ReactNode | null;
+    inactif?: string | null;
     visible?: boolean;
+    rid?: string | null;
     taille?: 'mini' | 'large';
 }
 
-const BoutonIcone = ({ nom, action = null, couleur = 'primaire', type = 'contour', libelle, icone, inactif = false, visible = true, taille = 'large' }: BoutonIconeProps) => {
-    const i18n = useI18n();
+const BoutonIcone = ({ nom = null, action = null, couleur = 'primaire', type = 'contour', page = null, modele = null, libelle = null, icone = null, inactif = null, visible = true, rid = null, taille = 'large' }: BoutonIconeProps) => {
+    const { i18n } = useI18n();
+    const gtp = useGoToPage();
+    const executeOnClick = (event) => {
+        if (!inactif && action) {
+            action(event);
+        } else if (!inactif && page) {
+            gtp(page, modele);
+        }
+    };
     if (visible) {
         return (
-            <span className="btn-wrapper">
-                <Tooltip placement="bottom" title={libelle ? libelle : i18n.action(nom)}>
-                    <Composant size={taille === 'mini' ? 'small' : 'large'} icon={icone} onClick={action} className={type + ' ' + couleur + ' ' + taille} disabled={inactif}></Composant>
-                </Tooltip>
-            </span>
+            <Tooltip placement="bottom" title={libelle ? libelle : i18n(nom)}>
+                <Composant //
+                    size={taille === 'mini' ? 'small' : 'large'}
+                    onClick={executeOnClick}
+                    icon={icone}
+                    loading={rid !== null}
+                    className={type + ' ' + couleur + ' ' + taille}
+                ></Composant>
+            </Tooltip>
         );
     }
 };

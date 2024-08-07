@@ -1,12 +1,11 @@
-import { useContext } from 'react';
+import useContexteBouton from '../../../noyau/contexte/ContexteBouton';
 import ActionNormale from '../actionBase/ActionNormale';
 import BoutonIcone from '../boutonBase/BoutonIcone';
-import { TypeBouttonActionProvider } from './GroupeAction';
 
 const ActionDansGroupe = (props) => {
-    const type = useContext(TypeBouttonActionProvider);
+    const { type } = useContexteBouton();
 
-    if (type === 'tableau') {
+    if (type === 'grandeIcone') {
         return <BoutonIcone {...props} />;
     } else if (type === 'menu' || type === 'menuPage') {
         return <ActionNormale {...props} type="noBorder" />;

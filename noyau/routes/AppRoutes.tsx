@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { MdlAuth } from '../auth/MdlAuth';
+import { ConfigAppType } from '../contexte/ContexteApp';
 import useAppDispatch from '../redux/useAppDispatch';
+import { listeRoutes } from './PageDefinition';
 import PageNotFound from './PageNotFound';
 
-const AppRoutes = ({ config, children }) => {
+const AppRoutes = ({ config, children }: { config: ConfigAppType; children: React.ReactNode }) => {
     const dispatch = useAppDispatch();
-    const [routes, setRoutes] = useState(null);
     useEffect(() => {
         dispatch(
             MdlAuth.setUser({
@@ -14,14 +15,18 @@ const AppRoutes = ({ config, children }) => {
                 mapRole: config.mapRole,
             })
         );
-        setRoutes(config.mapDomaine['invite'].routes);
     }, []);
 
+    const routes = useMemo(() => {
+        const domaine = config.mapDomaine['invite'];
+        return domaine?.listeModule?.length ? listeRoutes(domaine.listeModule) : null;
+    }, [config]);
+
     return (
-        <BrowserRouter>
+        <BrowserRouter basename={process.env.PUBLIC_URL}>
             <Routes>
                 <Route path="/" element={children}>
-                    {routes?.map((r) => r)}
+                    {routes}
                     <Route path="*" element={<PageNotFound />} />
                 </Route>
             </Routes>

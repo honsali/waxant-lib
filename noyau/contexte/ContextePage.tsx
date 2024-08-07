@@ -1,20 +1,13 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext } from 'react';
 
 export interface IContextePageProps {
-    carte: any;
-    changerCarte: any;
+    page: any;
 }
 
 const ContextePage = createContext({} as IContextePageProps);
 
-export const ContextePageProvider = ({ children }) => {
-    const [carte, setCarte] = useState();
-
-    const changerCarte = (m) => {
-        setCarte(m);
-    };
-
-    return <ContextePage.Provider value={{ carte, changerCarte }}>{children}</ContextePage.Provider>;
+export const ContextePageProvider = ({ page, children }) => {
+    return <ContextePage.Provider value={page}>{children}</ContextePage.Provider>;
 };
 
 const useContextePage = () => {

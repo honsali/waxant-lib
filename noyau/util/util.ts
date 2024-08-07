@@ -4,7 +4,10 @@ import _ from 'lodash';
 const removeNonSerialisable = <T extends object>(obj: T): Partial<T> => {
     const resultat: Partial<T> = {};
     Object.entries(obj).forEach(([key, value]) => {
-        if (!(value instanceof dayjs)) {
+        if (!(value instanceof dayjs) && nonNul(value)) {
+            if (typeof value === 'string' && value.trim() === '') {
+                return;
+            }
             resultat[key] = _.isPlainObject(value) ? removeNonSerialisable(value) : value;
         }
     });

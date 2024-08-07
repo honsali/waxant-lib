@@ -1,5 +1,6 @@
 import { Col, Row } from 'antd';
 import styled from 'styled-components';
+import useContexteView from 'waxant/noyau/contexte/ContexteView';
 import useI18n from '../../../noyau/i18n/useI18n';
 
 const Composant = styled.div`
@@ -127,12 +128,13 @@ const Corps = styled(Row)`
 `;
 
 const Panneau = ({ titre = null, libelle = null, marge = '10px', type = 'sansContour', couleur = 'primaire', blocAction = null, children }) => {
-    const i18n = useI18n();
+    const { i18n } = useI18n();
+    const { uc } = useContexteView();
     return (
         <Composant className={type + ' ' + couleur}>
             {(titre || libelle) && (
                 <Entete className={type + ' ' + couleur}>
-                    <Titre> {libelle || i18n.titre(titre)}</Titre>
+                    <Titre> {libelle || i18n(uc + '.' + titre)}</Titre>
                     <Action> {blocAction}</Action>
                 </Entete>
             )}

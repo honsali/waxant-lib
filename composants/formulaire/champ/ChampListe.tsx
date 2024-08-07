@@ -24,16 +24,18 @@ const ChampListe = (props) => {
         if (liste) {
             let max = 0;
             setReferenceListe(liste);
-            liste.forEach((r) => {
-                const libelle = optionLibelle ? r[optionLibelle] : r.libelle;
-                max = util.estNul(libelle) ? max : Math.max(max, libelle.length);
-                const code = r.code ? r.code : '-1';
-                refOptionList.push(
-                    <Option value={code} key={code}>
-                        {libelle}
-                    </Option>
-                );
-            });
+            if (Array.isArray(liste)) {
+                liste.forEach((r) => {
+                    const libelle = optionLibelle ? r[optionLibelle] : r.libelle;
+                    max = util.estNul(libelle) ? max : Math.max(max, libelle.length);
+                    const code = r.code ? r.code : '-1';
+                    refOptionList.push(
+                        <Option value={code} key={code}>
+                            {libelle}
+                        </Option>
+                    );
+                });
+            }
             setOptions(refOptionList);
             setMaxLength(max);
             const z = form.getFieldValue(attributes.name);
